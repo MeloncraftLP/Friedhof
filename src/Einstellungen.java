@@ -70,7 +70,6 @@ public class Einstellungen {
     }
 
     public static void main(String[] args) {
-	//Testbereich
 
     }
 }

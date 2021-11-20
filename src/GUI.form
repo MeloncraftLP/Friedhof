@@ -1,154 +1,472 @@
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-public class GUI extends JFrame{
-    private JPanel panel1;
-    private JPanel pnlPflanzen;
-    private JComboBox cbNameP1;
-    private JSpinner sAnzP1;
-    private JLabel lblP1;
-    private JLabel lblP2;
-    private JLabel lblP3;
-    private JLabel lblP4;
-    private JLabel lblP5;
-    private JLabel lblP6;
-    private JLabel lblP7;
-    private JComboBox cbNameP2;
-    private JComboBox cbNameP3;
-    private JComboBox cbNameP4;
-    private JComboBox cbNameP5;
-    private JComboBox cbNameP6;
-    private JComboBox cbNameP7;
-    private JSpinner sAnzP2;
-    private JSpinner sAnzP3;
-    private JSpinner sAnzP4;
-    private JSpinner sAnzP5;
-    private JSpinner sAnzP6;
-    private JSpinner sAnzP7;
-    private JLabel lblArbeitsaufwand;
-    private JSpinner sArbeitsaufwand;
-    private JPanel pnlSettings;
-    private JLabel lblGrabname;
-    private JComboBox cbGrabname;
-    private JPanel pnlSpeichern;
-    private JButton btnSpeichernExcel;
-    private JButton btnSpeichernRechnung;
-    private JLabel lblRechnungBrutto;
-    private JLabel lblRechnungNetto;
-    private JLabel lblBrutto;
-    private JLabel lblNetto;
-    private JButton btnBerechnen;
-    private JButton btnEinstellungen;
-    private JButton btnNeuerKunde;
-    private JButton btnNeuePflanze;
-
-
-    List<Pflanze> aP = new ArrayList<Pflanze>();
-    List<Grab> aG = new ArrayList<Grab>();
-
-    private void init(){
-        //Konfigurieren der Spinner
-        sArbeitsaufwand.setModel(new SpinnerNumberModel(0,0,1000,0.25));
-        sAnzP1.setModel(new SpinnerNumberModel(0,0,1000,1));
-        sAnzP2.setModel(new SpinnerNumberModel(0,0,1000,1));
-        sAnzP3.setModel(new SpinnerNumberModel(0,0,1000,1));
-        sAnzP4.setModel(new SpinnerNumberModel(0,0,1000,1));
-        sAnzP5.setModel(new SpinnerNumberModel(0,0,1000,1));
-        sAnzP6.setModel(new SpinnerNumberModel(0,0,1000,1));
-        sAnzP7.setModel(new SpinnerNumberModel(0,0,1000,1));
-
-        //alle Pflanzen und Graeber aktualisieren
-        aP = Pflanze.getAllePflanzen();
-        aG = Grab.getAlleGraber();
-
-        //Pflanzen Combo-Boxen initialisieren
-        for (int i = 0; i < aP.size(); i++) {
-            cbNameP1.addItem(aP.get(i));
-            cbNameP2.addItem(aP.get(i));
-            cbNameP3.addItem(aP.get(i));
-            cbNameP4.addItem(aP.get(i));
-            cbNameP5.addItem(aP.get(i));
-            cbNameP6.addItem(aP.get(i));
-            cbNameP7.addItem(aP.get(i));
-        }
-        //Graber initialisieren
-        for (int i = 0; i < aG.size(); i++) {
-            cbGrabname.addItem(aG.get(i));
-        }
-    }
-
-    //Daten einlesen
-    private List<Pflanze> pflanzenEinlesen(){
-        List<Pflanze> l = new ArrayList<>();
-
-        l.add(aP.get(cbNameP1.getSelectedIndex()));
-        l.add(aP.get(cbNameP2.getSelectedIndex()));
-        l.add(aP.get(cbNameP3.getSelectedIndex()));
-        l.add(aP.get(cbNameP4.getSelectedIndex()));
-        l.add(aP.get(cbNameP5.getSelectedIndex()));
-        l.add(aP.get(cbNameP6.getSelectedIndex()));
-        l.add(aP.get(cbNameP7.getSelectedIndex()));
-
-        return l;
-    }
-    private List<Integer> anzahlEinlesen(){
-        List<Integer> l = new ArrayList<>();
-
-        l.add(Integer.parseInt(sAnzP1.getValue().toString()));
-        l.add(Integer.parseInt(sAnzP2.getValue().toString()));
-        l.add(Integer.parseInt(sAnzP3.getValue().toString()));
-        l.add(Integer.parseInt(sAnzP4.getValue().toString()));
-        l.add(Integer.parseInt(sAnzP5.getValue().toString()));
-        l.add(Integer.parseInt(sAnzP6.getValue().toString()));
-        l.add(Integer.parseInt(sAnzP7.getValue().toString()));
-
-        return l;
-    }
-
-
-    //Konstruktor
-    public GUI(){
-
-        //Config
-        setTitle("Friedhofs-Rechnungs-Software v0.1");
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setSize(800,450);
-
-        //Init
-        init();
-
-        //Action Listener
-        btnBerechnen.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Rechnung.addalleRechnungen(new Rechnung(Double.parseDouble(sArbeitsaufwand.getValue().toString()), aG.get(cbGrabname.getSelectedIndex()),
-                        anzahlEinlesen(), pflanzenEinlesen()));
-                lblBrutto.setText(String.valueOf(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreis()) + " €");
-                lblNetto.setText(String.valueOf(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreisNetto()) + " €");
-            }
-        });
-
-        setContentPane(panel1);
-        setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        //Test
-        Pflanze p = new Pflanze("none", 0);
-        Pflanze p1 = new Pflanze("Pasele", 1.7);
-        Pflanze p2 = new Pflanze("Heuchera", 2.7);
-        Pflanze p3 = new Pflanze("Sedum", 5.6);
-        Pflanze p4 = new Pflanze("Erica", 0.9);
-
-        Grab g1 = new Grab("Mueller", "Engen", 105, false, "Mueller Karl", "07733239847", "Breitestr 3, Engen");
-        Grab g2 = new Grab("Maier", "Welschingen", 5, false, "Maier Donald", "077331892", "Breitestr 12, Engen");
-        Grab g3 = new Grab("Fritz", "Engen", 121, true, "Fritz Friedrich", "077324223", "Breitestr 18, Engen");
-
-        //*/
-
-        GUI g = new GUI();
-    }
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="GUI">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="BorderLayout" hgap="0" vgap="0">
+    <constraints>
+      <xy x="20" y="20" width="864" height="533"/>
+    </constraints>
+    <properties>
+      <minimumSize width="500" height="280"/>
+    </properties>
+    <border type="none"/>
+    <children>
+      <grid id="77ac" binding="pnlPflanzen" layout-manager="GridBagLayout">
+        <constraints border-constraint="Center"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="323e0" class="javax.swing.JLabel" binding="lblP1">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Pflanze 1"/>
+            </properties>
+          </component>
+          <component id="f9a1" class="javax.swing.JComboBox" binding="cbNameP1">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="cc4fb" class="javax.swing.JLabel" binding="lblP2">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Pflanze 2"/>
+            </properties>
+          </component>
+          <component id="337a5" class="javax.swing.JComboBox" binding="cbNameP2">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="33cbd" class="javax.swing.JLabel" binding="lblP3">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Pflanze 3"/>
+            </properties>
+          </component>
+          <component id="168a2" class="javax.swing.JComboBox" binding="cbNameP3">
+            <constraints>
+              <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="2d961" class="javax.swing.JLabel" binding="lblP4">
+            <constraints>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Pflanze 4"/>
+            </properties>
+          </component>
+          <component id="3b0e7" class="javax.swing.JComboBox" binding="cbNameP4">
+            <constraints>
+              <grid row="4" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="8aebc" class="javax.swing.JLabel" binding="lblP5">
+            <constraints>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Pflanze 5"/>
+            </properties>
+          </component>
+          <component id="89bec" class="javax.swing.JComboBox" binding="cbNameP5">
+            <constraints>
+              <grid row="5" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="f7cf" class="javax.swing.JLabel" binding="lblP6">
+            <constraints>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Pflanze 6"/>
+            </properties>
+          </component>
+          <component id="ad501" class="javax.swing.JComboBox" binding="cbNameP6">
+            <constraints>
+              <grid row="6" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="ee0c2" class="javax.swing.JLabel" binding="lblP7">
+            <constraints>
+              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Pflanze 7"/>
+            </properties>
+          </component>
+          <component id="d839f" class="javax.swing.JComboBox" binding="cbNameP7">
+            <constraints>
+              <grid row="7" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="325be" class="javax.swing.JLabel" binding="lblArbeitsaufwand">
+            <constraints>
+              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Arbeitsaufwand"/>
+            </properties>
+          </component>
+          <component id="51f49" class="javax.swing.JLabel" binding="lblGrabname">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Grabname"/>
+            </properties>
+          </component>
+          <component id="621ae" class="javax.swing.JComboBox" binding="cbGrabname">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="969cf" class="javax.swing.JSpinner" binding="sAnzP1">
+            <constraints>
+              <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="59574" class="javax.swing.JSpinner" binding="sAnzP2">
+            <constraints>
+              <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="3f472" class="javax.swing.JSpinner" binding="sAnzP3">
+            <constraints>
+              <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="31eef" class="javax.swing.JSpinner" binding="sAnzP4">
+            <constraints>
+              <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="758ef" class="javax.swing.JSpinner" binding="sAnzP5">
+            <constraints>
+              <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="d0076" class="javax.swing.JSpinner" binding="sAnzP6">
+            <constraints>
+              <grid row="6" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="95895" class="javax.swing.JSpinner" binding="sAnzP7">
+            <constraints>
+              <grid row="7" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="d07b9" class="javax.swing.JSpinner" binding="sArbeitsaufwand">
+            <constraints>
+              <grid row="10" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <hspacer id="59834">
+            <constraints>
+              <grid row="10" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0" ipadx="75"/>
+            </constraints>
+          </hspacer>
+          <component id="69937" class="javax.swing.JLabel" binding="lblRechnungNetto">
+            <constraints>
+              <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Rechnung Netto"/>
+            </properties>
+          </component>
+          <component id="b7822" class="javax.swing.JLabel" binding="lblRechnungBrutto">
+            <constraints>
+              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Rechnung Brutto"/>
+            </properties>
+          </component>
+          <hspacer id="f7202">
+            <constraints>
+              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0" ipadx="30"/>
+            </constraints>
+          </hspacer>
+          <component id="366ae" class="javax.swing.JLabel" binding="lblNetto">
+            <constraints>
+              <grid row="11" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="923a9" class="javax.swing.JLabel" binding="lblBrutto">
+            <constraints>
+              <grid row="12" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <vspacer id="8cb49">
+            <constraints>
+              <grid row="11" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0" ipady="20"/>
+            </constraints>
+          </vspacer>
+          <vspacer id="bf680">
+            <constraints>
+              <grid row="12" column="2" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0" ipady="20"/>
+            </constraints>
+          </vspacer>
+          <hspacer id="3aedc">
+            <constraints>
+              <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0" ipadx="75"/>
+            </constraints>
+          </hspacer>
+          <vspacer id="3ac7f">
+            <constraints>
+              <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0" ipady="10"/>
+            </constraints>
+          </vspacer>
+          <component id="b753f" class="javax.swing.JLabel" binding="lblSonstiges">
+            <constraints>
+              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Sonstiges"/>
+            </properties>
+          </component>
+          <component id="1917a" class="javax.swing.JTextField" binding="tfSonstiges">
+            <constraints>
+              <grid row="9" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                <preferred-size width="150" height="-1"/>
+              </grid>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=" "/>
+            </properties>
+          </component>
+          <component id="8924e" class="javax.swing.JSpinner" binding="sSonstiges">
+            <constraints>
+              <grid row="9" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="4771b" class="javax.swing.JLabel" binding="lblErde">
+            <constraints>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Erde und Duenger"/>
+            </properties>
+          </component>
+          <component id="3c8ce" class="javax.swing.JSpinner" binding="sErdeMenge">
+            <constraints>
+              <grid row="8" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="b8760" class="javax.swing.JLabel" binding="lblPreisP1">
+            <constraints>
+              <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="b7683" class="javax.swing.JLabel" binding="lblPreisP2">
+            <constraints>
+              <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="132f6" class="javax.swing.JLabel" binding="lblPreisP3">
+            <constraints>
+              <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="ffa8a" class="javax.swing.JLabel" binding="lblPreisP4">
+            <constraints>
+              <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="70839" class="javax.swing.JLabel" binding="lblPreisP5">
+            <constraints>
+              <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="89a80" class="javax.swing.JLabel" binding="lblPreisP6">
+            <constraints>
+              <grid row="6" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="8b18" class="javax.swing.JLabel" binding="lblPreisP7">
+            <constraints>
+              <grid row="7" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="203c2" class="javax.swing.JLabel" binding="lblPreisErde">
+            <constraints>
+              <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="e488d" class="javax.swing.JLabel" binding="lblPreisSonstiges">
+            <constraints>
+              <grid row="9" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+          <component id="31e55" class="javax.swing.JLabel" binding="lblPreisArbeit">
+            <constraints>
+              <grid row="10" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value=""/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="c9e65" binding="pnlSettings" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+        <constraints border-constraint="North"/>
+        <properties/>
+        <border type="none" title="Einstellungen"/>
+        <children>
+          <component id="1f8b5" class="javax.swing.JButton" binding="btnEinstellungen">
+            <constraints/>
+            <properties>
+              <text value="Einstellungen"/>
+            </properties>
+          </component>
+          <component id="45e73" class="javax.swing.JButton" binding="btnNeuerKunde">
+            <constraints/>
+            <properties>
+              <text value="Neuer Kunde erstellen"/>
+            </properties>
+          </component>
+          <component id="3b19b" class="javax.swing.JButton" binding="btnNeuePflanze">
+            <constraints/>
+            <properties>
+              <text value="Neue Pflanze eerstellen"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="898b" binding="pnlSpeichern" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+        <constraints border-constraint="South"/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="bea04" class="javax.swing.JButton" binding="btnBerechnen">
+            <constraints/>
+            <properties>
+              <text value="Eingabe verarbeiten"/>
+            </properties>
+          </component>
+          <hspacer id="a7962">
+            <constraints/>
+          </hspacer>
+          <component id="91ab1" class="javax.swing.JButton" binding="btnSpeichernExcel">
+            <constraints/>
+            <properties>
+              <text value="Excel speichern"/>
+            </properties>
+          </component>
+          <component id="7aa94" class="javax.swing.JButton" binding="btnSpeichernRechnung">
+            <constraints/>
+            <properties>
+              <text value="Rechnung-PDF speichern"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

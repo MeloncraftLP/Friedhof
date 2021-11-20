@@ -4,26 +4,53 @@ import java.util.List;
 public class Rechnung {
 
     //Variablen
-    private double arbeitsaufwand;
-    private static final double STUNDENLOHN = 10;
-    private double gesamtPreis;
-    private double gesamtPreisNetto;
-    private Grab grab;
-    private List<Integer> anzahlPflanzen;
-    private List<Pflanze> pflanzen;
-    private static List<Rechnung> alleRechnungen = new ArrayList<>();
+    private final double arbeitsaufwand;
+    private static final double STUNDENLOHN = 48.07;
+    private static final double ERDEPREIS = 8.4;
+    private final double gesamtPreis;
+    private final double gesamtPreisBrutto;
+    private String sonstiges;
+    private final Grab grab;
+    private final List<Integer> anzahlPflanzen;
+    private final List<Pflanze> pflanzen;
+    private static final List<Rechnung> alleRechnungen = new ArrayList<>();
     private static int anzahlRechnungen = -1;
     private static final double MEHRWERTSTEUER = 1.19;
 
-    //Getter und Setter
-    public double gesamtPreisBerechnen(){
-        double p =arbeitsaufwand*STUNDENLOHN;
-        for (int i = 0; i < anzahlPflanzen.size(); i++) {
-            p+=anzahlPflanzen.get(i)*pflanzen.get(i).getPreis();
+    //Funktionen
+    public double gesamtPreisBerechnen(double arbeitsaufwand, double erdeMenge, double preis, List<Integer> anzahlPflanzen, List<Pflanze> pflanzen){
+        double p;
+        List<Double> k = new ArrayList<>();
+        p = arbeitBerechnen(arbeitsaufwand) + erdeBerechnen(erdeMenge) + sonstigesBerechnen(preis);
+        k = pflanzenPreisBerechnen(anzahlPflanzen, pflanzen);
+        for (int i = 0; i < k.size(); i++) {
+            p += k.get(i);
         }
-        p=Math.round(p*100.0)/100.0;
         return p;
     }
+    public List<Double> pflanzenPreisBerechnen(List<Integer> anzahlPflanzen, List<Pflanze> pflanzen){
+        List<Double> p = new ArrayList<>();
+        for (int i = 0; i < pflanzen.size(); i++) {
+            p.add(anzahlPflanzen.get(i)*pflanzen.get(i).getPreis());
+        }
+        return p;
+    }
+    public double arbeitBerechnen(double arbeitsaufwand){
+        double p;
+        p = arbeitsaufwand * STUNDENLOHN;
+        p = Math.round((p)*100.0)/100.0;
+        return p;
+    }
+    public double erdeBerechnen(double erdeMenge){
+        double p;
+        p = erdeMenge * ERDEPREIS;
+        p = Math.round((p)*100.0)/100.0;
+        return p;
+    }
+    public double sonstigesBerechnen(double preis){
+        return preis;
+    }
+    //Getter und Setter
     public double getGesamtPreis(){
         return gesamtPreis;
     }
@@ -45,18 +72,18 @@ public class Rechnung {
     public static int getAnzahlRechnungen() {
         return anzahlRechnungen;
     }
-    public double getGesamtPreisNetto() {
-        return gesamtPreisNetto;
+    public double getGesamtPreisBrutto() {
+        return gesamtPreisBrutto;
     }
 
     //Konstruktor
-    public Rechnung(double arbeitsaufwand, Grab grab, List<Integer> anzahlPflanzen, List<Pflanze> pflanzen) {
+    public Rechnung(double arbeitsaufwand, double erdeMenge, double sonstigesPreis, Grab grab, List<Integer> anzahlPflanzen, List<Pflanze> pflanzen) {
         this.arbeitsaufwand = arbeitsaufwand;
         this.grab = grab;
         this.anzahlPflanzen = anzahlPflanzen;
         this.pflanzen = pflanzen;
-        gesamtPreis = gesamtPreisBerechnen();
-        gesamtPreisNetto = Math.round((gesamtPreis * MEHRWERTSTEUER)*100.0)/100.0;;
+        gesamtPreis = gesamtPreisBerechnen(arbeitsaufwand, erdeMenge, sonstigesPreis, anzahlPflanzen, pflanzen);
+        gesamtPreisBrutto = Math.round((gesamtPreis * MEHRWERTSTEUER)*100.0)/100.0;
         anzahlRechnungen++;
     }
 

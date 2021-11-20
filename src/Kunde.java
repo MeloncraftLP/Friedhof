@@ -1,12 +1,14 @@
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Kunde implements Serializable {
 
     //Variablen
+    @Serial
+    private static final long serialVersionUID = 6755692808689127339L;
     private String name;
     private String adresse;
-    private String telefonnummer;
-    private String email;
+    private String plzOrt;
 
     //Getter und Setter
     public String getAdresse() {
@@ -21,23 +23,17 @@ public class Kunde implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-    public String getTelefonnummer() {
-        return telefonnummer;
+    public String getPlzOrt() {
+        return plzOrt;
     }
-    public void setTelefonnummer(String telefonnummer) {
-        this.telefonnummer = telefonnummer;
-    }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
+    public void setPlzOrt(String plzOrt) {
+        this.plzOrt = plzOrt;
     }
 
     //Konstruktor
-    public Kunde(String name, String telefonnummer, String adresse){
+    public Kunde(String name, String adresse, String plzOrt) {
         this.name = name;
         this.adresse = adresse;
-        this.telefonnummer = telefonnummer;
+        this.plzOrt = plzOrt;
     }
 }

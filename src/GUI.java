@@ -38,15 +38,30 @@ public class GUI extends JFrame{
     private JPanel pnlSpeichern;
     private JButton btnSpeichernExcel;
     private JButton btnSpeichernRechnung;
-    private JLabel lblRechnungBrutto;
     private JLabel lblRechnungNetto;
-    private JLabel lblBrutto;
+    private JLabel lblRechnungBrutto;
     private JLabel lblNetto;
+    private JLabel lblBrutto;
     private JButton btnBerechnen;
     private JButton btnEinstellungen;
     private JButton btnNeuerKunde;
     private JButton btnNeuePflanze;
-//TODO JComboBox mit Suchfunktion einrichten
+    private JLabel lblSonstiges;
+    private JTextField tfSonstiges;
+    private JSpinner sSonstiges;
+    private JLabel lblErde;
+    private JSpinner sErdeMenge;
+    private JLabel lblPreisP1;
+    private JLabel lblPreisP2;
+    private JLabel lblPreisP3;
+    private JLabel lblPreisP4;
+    private JLabel lblPreisP5;
+    private JLabel lblPreisP6;
+    private JLabel lblPreisP7;
+    private JLabel lblPreisErde;
+    private JLabel lblPreisSonstiges;
+    private JLabel lblPreisArbeit;
+    //TODO JComboBox mit Suchfunktion einrichten
     private Einstellungen einstellungen;
     private List<Pflanze> aP = new ArrayList<Pflanze>();
     private List<Grab> aG = new ArrayList<Grab>();
@@ -56,6 +71,8 @@ public class GUI extends JFrame{
 
         //Konfigurieren der Spinner
         sArbeitsaufwand.setModel(new SpinnerNumberModel(0,0,10000,0.25));
+        sErdeMenge.setModel(new SpinnerNumberModel(0,0,10000,0.001));
+        sSonstiges.setModel(new SpinnerNumberModel(0,0,10000,0.01));
         sAnzP1.setModel(new SpinnerNumberModel(0,0,1000,1));
         sAnzP2.setModel(new SpinnerNumberModel(0,0,1000,1));
         sAnzP3.setModel(new SpinnerNumberModel(0,0,1000,1));
@@ -131,7 +148,7 @@ public class GUI extends JFrame{
     public GUI(){
 
         //Config
-        setTitle("Friedhofs-Rechnungs-Software v0.1");
+        setTitle("Friedhofs-Rechnungs-Software v0.2");
         setSize(800,450); //800, 450
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -150,14 +167,29 @@ public class GUI extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Rechnung.addalleRechnungen(new Rechnung(Double.parseDouble(sArbeitsaufwand.getValue().toString()), aG.get(cbGrabname.getSelectedIndex()),
-                            anzahlEinlesen(), pflanzenEinlesen())); //TODO Error
+                    //neue Rechnung erstellen und Preis berechnen
+                    Rechnung.addalleRechnungen(new Rechnung(Double.parseDouble(sArbeitsaufwand.getValue().toString()),
+                            Double.parseDouble(sErdeMenge.getValue().toString()),Double.parseDouble(sSonstiges.getValue().toString()),
+                            aG.get(cbGrabname.getSelectedIndex()), anzahlEinlesen(), pflanzenEinlesen()));
+
+                    //Labels mit einzelnen Preisen setzen
+                    lblPreisArbeit.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).arbeitBerechnen(Double.parseDouble(sArbeitsaufwand.getValue().toString())) + " €");
+                    lblPreisErde.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).erdeBerechnen(Double.parseDouble(sErdeMenge.getValue().toString())) + " €");
+                    lblPreisSonstiges.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).sonstigesBerechnen(Double.parseDouble(sSonstiges.getValue().toString())) + " €");
+                    lblPreisP1.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(0) + " €");
+                    lblPreisP2.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(1) + " €");
+                    lblPreisP3.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(2) + " €");
+                    lblPreisP4.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(3) + " €");
+                    lblPreisP5.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(4) + " €");
+                    lblPreisP6.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(5) + " €");
+                    lblPreisP7.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(6) + " €");
+
                 }catch (Exception x){
                     x.printStackTrace();
                     showError("Die Eingabe enthält keine Werte.");
                 }
-                lblBrutto.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreis() + " €");
-                lblNetto.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreisNetto() + " €");
+                lblNetto.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreis() + " €");
+                lblBrutto.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreisBrutto() + " €");
             }
         });
 
@@ -166,6 +198,7 @@ public class GUI extends JFrame{
     }
 
     public static void main(String[] args) {
+
         GUI g = new GUI();
 
     }

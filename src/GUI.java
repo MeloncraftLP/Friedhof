@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,14 +46,16 @@ public class GUI extends JFrame{
     private JButton btnEinstellungen;
     private JButton btnNeuerKunde;
     private JButton btnNeuePflanze;
-
-
-    List<Pflanze> aP = new ArrayList<Pflanze>();
-    List<Grab> aG = new ArrayList<Grab>();
+//TODO JComboBox mit Suchfunktion einrichten
+    private Einstellungen einstellungen;
+    private List<Pflanze> aP = new ArrayList<Pflanze>();
+    private List<Grab> aG = new ArrayList<Grab>();
 
     private void init(){
+        objekteLaden();
+
         //Konfigurieren der Spinner
-        sArbeitsaufwand.setModel(new SpinnerNumberModel(0,0,1000,0.25));
+        sArbeitsaufwand.setModel(new SpinnerNumberModel(0,0,10000,0.25));
         sAnzP1.setModel(new SpinnerNumberModel(0,0,1000,1));
         sAnzP2.setModel(new SpinnerNumberModel(0,0,1000,1));
         sAnzP3.setModel(new SpinnerNumberModel(0,0,1000,1));
@@ -78,6 +82,13 @@ public class GUI extends JFrame{
         for (int i = 0; i < aG.size(); i++) {
             cbGrabname.addItem(aG.get(i));
         }
+    }
+
+    //Objekte aus der Datei laden und erstellen
+    private void objekteLaden() {
+        einstellungen = new Einstellungen(this);
+        Pflanze.setAllePflanzen(einstellungen.allePflanzenLaden());
+        Grab.setAlleGraber(einstellungen.alleGraberLaden());
     }
 
     //Daten einlesen
@@ -108,14 +119,28 @@ public class GUI extends JFrame{
         return l;
     }
 
+    //Errors anzeigen
+    public void showError(String message){
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
 
     //Konstruktor
     public GUI(){
 
         //Config
         setTitle("Friedhofs-Rechnungs-Software v0.1");
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setSize(800,450);
+        setSize(800,450); //800, 450
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                einstellungen.alleGraberSpeichern(Grab.getAlleGraber());
+                einstellungen.allePflanzenSpeichern(Pflanze.getAllePflanzen());
+                System.exit(0); //schließen und VM beenden
+            }
+        });
 
         //Init
         init();
@@ -124,10 +149,15 @@ public class GUI extends JFrame{
         btnBerechnen.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Rechnung.addalleRechnungen(new Rechnung(Double.parseDouble(sArbeitsaufwand.getValue().toString()), aG.get(cbGrabname.getSelectedIndex()),
-                        anzahlEinlesen(), pflanzenEinlesen()));
-                lblBrutto.setText(String.valueOf(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreis()) + " €");
-                lblNetto.setText(String.valueOf(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreisNetto()) + " €");
+                try {
+                    Rechnung.addalleRechnungen(new Rechnung(Double.parseDouble(sArbeitsaufwand.getValue().toString()), aG.get(cbGrabname.getSelectedIndex()),
+                            anzahlEinlesen(), pflanzenEinlesen())); //TODO Error
+                }catch (Exception x){
+                    x.printStackTrace();
+                    showError("Die Eingabe enthält keine Werte.");
+                }
+                lblBrutto.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreis() + " €");
+                lblNetto.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreisNetto() + " €");
             }
         });
 
@@ -136,7 +166,7 @@ public class GUI extends JFrame{
     }
 
     public static void main(String[] args) {
-       
         GUI g = new GUI();
+
     }
 }

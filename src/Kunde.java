@@ -1,4 +1,6 @@
-public class Kunde {
+import java.io.Serializable;
+
+public class Kunde implements Serializable {
 
     //Variablen
     private String name;

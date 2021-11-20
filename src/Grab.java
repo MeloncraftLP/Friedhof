@@ -1,13 +1,13 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Grab extends Kunde {
+public class Grab extends Kunde implements Serializable {
 
     //Variablen
     private String grabName;
     private String friedhof;
     private int grabNummer;
-    private int anzahlVerschiedenerPflanzen;
     private boolean betreutesGrabfeld;
     private static List<Grab> alleGraber = new ArrayList<>();
 
@@ -30,12 +30,6 @@ public class Grab extends Kunde {
     public void setGrabNummer(int grabNummer) {
         this.grabNummer = grabNummer;
     }
-    public int getAnzahlVerschiedenerPflanzen() {
-        return anzahlVerschiedenerPflanzen;
-    }
-    public void setAnzahlVerschiedenerPflanzen(int anzahlVerschiedenerPflanzen) {
-        this.anzahlVerschiedenerPflanzen = anzahlVerschiedenerPflanzen;
-    }
     public boolean isBetreutesGrabfeld() {
         return betreutesGrabfeld;
     }
@@ -47,6 +41,9 @@ public class Grab extends Kunde {
     }
     public static void addAlleGraber(Grab g) {
         Grab.alleGraber.add(g);
+    }
+    public static void setAlleGraber(List<Grab> alleGraber) {
+        Grab.alleGraber = alleGraber;
     }
 
     //Konstruktor

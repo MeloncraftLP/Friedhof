@@ -16,5 +16,7 @@ hs_err_pid*
 *.eml
 *.grb
 *.plz
+*.pdf
+*.png
 out/
 src/META-INF/

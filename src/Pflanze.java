@@ -26,10 +26,12 @@ public class Pflanze implements Serializable {
         this.name = name;
         this.grosse = grosse;
         this.preis = preis;
+        allePflanzen.add(this);
     }
     public Pflanze(String name, double preis) {
         this.name = name;
         this.preis = preis;
+        allePflanzen.add(this);
     }
 
     //Getter und Setter

@@ -128,6 +128,8 @@ public class Pdf {
 
     //Konstruktor
     public Pdf(String saison, String grabname, Rechnung r, GUI g){
+        this.r = r;
+        this.g = g;
         path = "Friedhof-Rechnungen/"+saison+"/"+grabname+".pdf";
         pdfSchreiben(r);
     }

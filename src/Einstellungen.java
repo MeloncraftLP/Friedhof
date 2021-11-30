@@ -68,8 +68,4 @@ public class Einstellungen {
         }
         return l;
     }
-
-    public static void main(String[] args) {
-
-    }
 }

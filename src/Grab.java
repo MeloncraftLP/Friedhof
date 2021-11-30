@@ -14,7 +14,6 @@ public class Grab extends Kunde implements Serializable {
     private String feldName;
     private String grabArt;
     private int grabNummer;
-    private boolean betreutesGrabfeld;
     private static List<Grab> alleGraber = new ArrayList<>();
 
     //Getter und Setter
@@ -35,12 +34,6 @@ public class Grab extends Kunde implements Serializable {
     }
     public void setGrabNummer(int grabNummer) {
         this.grabNummer = grabNummer;
-    }
-    public boolean isBetreutesGrabfeld() {
-        return betreutesGrabfeld;
-    }
-    public void setBetreutesGrabfeld(boolean betreutesGrabfeld) {
-        this.betreutesGrabfeld = betreutesGrabfeld;
     }
     public static List<Grab> getAlleGraber() {
         return alleGraber;
@@ -65,41 +58,34 @@ public class Grab extends Kunde implements Serializable {
     }
 
     //Konstruktor
-    public Grab(String grabName, String friedhof, int grabNummer, String feldName, String grabArt, boolean betreutesGrabfeld, String name, String adresse, String plzOrt) {
-        super(name, adresse, plzOrt);
+    public Grab(String grabName, String friedhof, int grabNummer, String feldName, String grabArt, String name, String adresse, String plzOrt, int kundenNr) {
+        super(name, adresse, plzOrt, kundenNr);
         this.grabName = grabName;
         this.friedhof = friedhof;
         this.grabNummer = grabNummer;
-        this.betreutesGrabfeld = betreutesGrabfeld;
         this.feldName = feldName;
         this.grabArt = grabArt;
         alleGraber.add(this);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //TODO Konstruktoren bauen
-
-
+    public Grab(String grabName, String friedhof, String name, String adresse, String plzOrt) {
+        super(name, adresse, plzOrt);
+        this.grabName = grabName;
+        this.friedhof = friedhof;
+    }
+    public Grab(String grabName, String friedhof, String grabArt, String name, String adresse, String plzOrt) {
+        super(name, adresse, plzOrt);
+        this.grabArt = grabArt;
+        this.grabName = grabName;
+        this.friedhof = friedhof;
+    }
+    public Grab(String grabName, String friedhof, String grabArt, int grabNummer, String feldName, String name, String adresse, String plzOrt) {
+        super(name, adresse, plzOrt);
+        this.grabArt = grabArt;
+        this.grabNummer = grabNummer;
+        this.feldName = feldName;
+        this.grabName = grabName;
+        this.friedhof = friedhof;
+    }
 
     @Override
     public String toString() {

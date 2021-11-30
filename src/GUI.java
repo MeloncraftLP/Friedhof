@@ -61,6 +61,8 @@ public class GUI extends JFrame{
     private JLabel lblPreisErde;
     private JLabel lblPreisSonstiges;
     private JLabel lblPreisArbeit;
+    private JLabel lblMWSt;
+    private JLabel lblPreisMWST;
     //TODO JComboBox mit Suchfunktion einrichten
     private Einstellungen einstellungen;
     private List<Pflanze> aP = new ArrayList<Pflanze>();
@@ -144,12 +146,47 @@ public class GUI extends JFrame{
                 JOptionPane.ERROR_MESSAGE);
     }
 
+    //Eingabe verarbeiten geklickt (fuer Action Listener)
+    private void eingabeVerarbeitenGeklickt(){
+        try {
+            //neue Rechnung erstellen und Preis berechnen
+            Rechnung.addalleRechnungen(new Rechnung(Double.parseDouble(sArbeitsaufwand.getValue().toString()),
+                    Double.parseDouble(sErdeMenge.getValue().toString()),Double.parseDouble(sSonstiges.getValue().toString()),
+                    tfSonstiges.getText(), aG.get(cbGrabname.getSelectedIndex()), anzahlEinlesen(), pflanzenEinlesen()));
+
+            //Labels mit einzelnen Preisen setzen
+            lblPreisArbeit.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getArbeitsPreis() + " €");
+            lblPreisErde.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getErdeBerPreis() + " €");
+            lblPreisSonstiges.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getSonstigesPreis() + " €");
+            lblPreisP1.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(0) + " €");
+            lblPreisP2.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(1) + " €");
+            lblPreisP3.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(2) + " €");
+            lblPreisP4.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(3) + " €");
+            lblPreisP5.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(4) + " €");
+            lblPreisP6.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(5) + " €");
+            lblPreisP7.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(6) + " €");
+
+        }catch (Exception x){
+            x.printStackTrace();
+            showError("Die Eingabe enthält keine Werte.");
+        }
+        lblNetto.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreis() + " €");
+        lblPreisMWST.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getMwstPreis() + " €");
+        lblBrutto.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreisBrutto() + " €");
+
+    }
+    private void speichernGeklickt(){
+        eingabeVerarbeitenGeklickt();
+        new Pdf("a", "b", Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()), this);
+    }
+
+
     //Konstruktor
     public GUI(){
 
         //Config
         setTitle("Friedhofs-Rechnungs-Software v0.2");
-        setSize(800,450); //800, 450
+        setSize(800,500); //800, 450
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -166,35 +203,18 @@ public class GUI extends JFrame{
         btnBerechnen.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    //neue Rechnung erstellen und Preis berechnen
-                    Rechnung.addalleRechnungen(new Rechnung(Double.parseDouble(sArbeitsaufwand.getValue().toString()),
-                            Double.parseDouble(sErdeMenge.getValue().toString()),Double.parseDouble(sSonstiges.getValue().toString()),
-                            aG.get(cbGrabname.getSelectedIndex()), anzahlEinlesen(), pflanzenEinlesen()));
-
-                    //Labels mit einzelnen Preisen setzen
-                    lblPreisArbeit.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).arbeitBerechnen(Double.parseDouble(sArbeitsaufwand.getValue().toString())) + " €");
-                    lblPreisErde.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).erdeBerechnen(Double.parseDouble(sErdeMenge.getValue().toString())) + " €");
-                    lblPreisSonstiges.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).sonstigesBerechnen(Double.parseDouble(sSonstiges.getValue().toString())) + " €");
-                    lblPreisP1.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(0) + " €");
-                    lblPreisP2.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(1) + " €");
-                    lblPreisP3.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(2) + " €");
-                    lblPreisP4.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(3) + " €");
-                    lblPreisP5.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(4) + " €");
-                    lblPreisP6.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(5) + " €");
-                    lblPreisP7.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).pflanzenPreisBerechnen(anzahlEinlesen(), pflanzenEinlesen()).get(6) + " €");
-
-                }catch (Exception x){
-                    x.printStackTrace();
-                    showError("Die Eingabe enthält keine Werte.");
-                }
-                lblNetto.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreis() + " €");
-                lblBrutto.setText(Rechnung.getalleRechnungen().get(Rechnung.getAnzahlRechnungen()).getGesamtPreisBrutto() + " €");
+                eingabeVerarbeitenGeklickt();
             }
         });
 
         setContentPane(panel1);
         setVisible(true);
+        btnSpeichernRechnung.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                speichernGeklickt();
+            }
+        });
     }
 
     public static void main(String[] args) {

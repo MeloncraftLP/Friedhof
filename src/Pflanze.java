@@ -74,4 +74,13 @@ public class Pflanze implements Serializable {
     public String toString() {
         return name + "   ( "+preis+"€ )";
     }
+
+    public String toPDF(char c) {
+        if(c == 'n')
+            return name;
+        else if(c == 'p')
+            return String.valueOf(preis);
+        else
+            return "";
+    }
 }

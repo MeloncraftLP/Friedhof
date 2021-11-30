@@ -7,21 +7,24 @@ public class NeuesGrab extends JDialog {
     private JButton buttonCancel;
     private JPanel pnlButtons;
     private JPanel pnlMain;
-    private JTextField textField1;
+    private JTextField tfGrabname;
     private JLabel lblGrabname;
     private JLabel lblGrabnummer;
     private JLabel lblFriedhof;
     private JLabel lblBetreuerName;
-    private JLabel lblBetruerEmail;
-    private JLabel lblBetruerTelefon;
     private JLabel lblBetruerAdresse;
-    private JCheckBox checkBetruetesGrabfeld;
-    private JSpinner sGrabnummer;
-    private JTextField tfFriedhof;
     private JTextField tfBetreuerName;
-    private JTextField tfBetreuerEmail;
-    private JTextField tfBetruerTelefon;
     private JTextField tfbetruerAdresse;
+    private JSpinner sGrabnummer;
+    private JLabel lblKundenNr;
+    private JSpinner sKundenNr;
+    private JComboBox cbFriedhof;
+    private JLabel lblOrtPlz;
+    private JTextField tfPlzOrt;
+    private JLabel lblFeldname;
+    private JTextField tfFeldname;
+    private JLabel lblGrabart;
+    private JComboBox cbGrabart;
 
     public NeuesGrab() {
         setContentPane(contentPane);
@@ -57,7 +60,35 @@ public class NeuesGrab extends JDialog {
     }
 
     private void onOK() {
-        // add your code here
+
+        String grabArt, grabFeld;
+        int grabNummer, kundenNummer;
+
+            grabArt = cbGrabart.getSelectedItem().toString();
+            grabFeld = tfFeldname.getText();
+            grabNummer = Integer.parseInt(sGrabnummer.getValue().toString());
+            kundenNummer = Integer.parseInt(sGrabnummer.getValue().toString());
+
+        if(grabArt != "keine" && grabFeld == "" && grabNummer == 0){
+            new Grab(tfGrabname.getText(), cbFriedhof.getSelectedItem().toString(), grabArt, tfBetreuerName.getText(), tfbetruerAdresse.getText(), tfPlzOrt.getText());
+            showInfo("Es wurde ein neues Grab erstellt.");
+        }
+        else if(grabArt != "keine" && grabFeld != "" && grabNummer != 0 && kundenNummer == 0){
+            new Grab(tfGrabname.getText(), cbFriedhof.getSelectedItem().toString(), grabArt, grabNummer, grabFeld, tfBetreuerName.getText(), tfbetruerAdresse.getText(), tfPlzOrt.getText());
+            showInfo("Es wurde ein neues Grab erstellt.");
+        }
+        else if(grabArt != "keine" && grabFeld != "" && grabNummer != 0 && kundenNummer != 0){
+            new Grab(tfGrabname.getText(), cbFriedhof.getSelectedItem().toString(), grabNummer, grabFeld, grabArt, tfBetreuerName.getText(), tfbetruerAdresse.getText(), tfPlzOrt.getText(), kundenNummer);
+            showInfo("Es wurde ein neues Grab erstellt.");
+        }
+        else if(grabArt == "keine" && grabFeld == "" && grabNummer == 0 && kundenNummer == 0){
+            new Grab(tfGrabname.getText(), cbFriedhof.getSelectedItem().toString(), tfBetreuerName.getText(), tfbetruerAdresse.getText(), tfPlzOrt.getText());
+            showInfo("Es wurde ein neues Grab erstellt.");
+        }
+        else{
+            showWarning("Es konnte kein neues Grab erstellt werden.");
+        }
+
         dispose();
     }
 
@@ -65,6 +96,17 @@ public class NeuesGrab extends JDialog {
         // add your code here if necessary
         dispose();
     }
+    private void showInfo(String message) {
+        JOptionPane.showMessageDialog(this,
+                message);
+    }
+    private void showWarning(String message){
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Warning",
+                JOptionPane.WARNING_MESSAGE);
+    }
+
 
     public static void main(String[] args) {
         NeuesGrab dialog = new NeuesGrab();

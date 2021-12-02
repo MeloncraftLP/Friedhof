@@ -4,12 +4,18 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
+import javax.swing.filechooser.FileSystemView;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Pdf {
 
     //Variablen
     private Rechnung r;
     private GUI g;
     private final String path;
+    private final String pathFolder;
     private PDDocument document;
     private PDPage page;
     private PDPageContentStream pageCS;
@@ -36,14 +42,43 @@ public class Pdf {
             e.printStackTrace();
         }
     }
+    private void rechnungSpeichern() {
+        try{
+            //Ordner erstellen
+            File dir = new File(pathFolder);
+            if(!dir.exists()){
+                dir.mkdirs();
+            }
+            //PDF Datei erstellen
+            File pdf = new File(path);
+            if(!pdf.exists()) {
+                pdf.createNewFile();
+            }
 
-    //
+            //PDF mit Text speichern
+            document.save(path);
+            document.close();
+            g.showMessage("Eine PDF-Rechnung wurde erstellt.");
+
+        }catch (Exception e){
+            e.printStackTrace();
+            g.showError("PDF konnte nicht gespeichert werden.");
+        }
+
+    }
+
+    //TODO Methode bauen fuer "Schmierzettel"
+    //TODO wenn man ein Grab ohne alle Parameter erstellt soll keine Rechnung erstellt werden koennen bzw nicht gedruckt werden
+
+    //Rechnung schreiben
     public void pdfSchreiben(Rechnung r){
         try{
             document = new PDDocument();
             page = new PDPage();
             document.addPage(page);
             pageCS = new PDPageContentStream(document, page);
+
+            //TODO Datum muss rein
 
             //Variablen
             addText(String.valueOf(r.getBelegNummer()), 11, 175, 670);
@@ -86,7 +121,6 @@ public class Pdf {
             addText(r.getMwstPreis() + " €", 11, 450, 130);
             addTextBold(r.getGesamtPreisBrutto() + " €", 11, 450, 105);
 
-
             //Konstant
             addTextBold("Rechnung", 24, 75, 700);
             addText("Belegnummer: ", 11, 75, 670);
@@ -117,8 +151,8 @@ public class Pdf {
             addText("Zahlbar ab sofort", 11, 75, 25);
 
             pageCS.close();
-            document.save("Test.pdf"); //TODO path
-            document.close();
+
+            rechnungSpeichern();
         }
         catch(Exception e){
             e.printStackTrace();
@@ -127,10 +161,11 @@ public class Pdf {
     }
 
     //Konstruktor
-    public Pdf(String saison, String grabname, Rechnung r, GUI g){
+    public Pdf(String saison, Rechnung r, GUI g){
         this.r = r;
         this.g = g;
-        path = "Friedhof-Rechnungen/"+saison+"/"+grabname+".pdf";
+        pathFolder = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+"/0-Friedhofsoftware-Rechnungen/" + saison;
+        path = FileSystemView.getFileSystemView().getDefaultDirectory().getPath()+"/0-Friedhofsoftware-Rechnungen/"+saison+"/"+r.getGrab().getGrabName()+".pdf";
         pdfSchreiben(r);
     }
 }
